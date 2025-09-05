@@ -1,70 +1,255 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Convertisseur de Monnaie</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertisseur Euro → Dollar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .taux {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .btn-convertir {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-convertir:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-convertir:active {
+            transform: translateY(0);
+        }
+        
+        .resultat {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            text-align: center;
+            display: none;
+        }
+        
+        .resultat.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .montant-converti {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .details {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-
-  <div class="bg-white shadow-lg rounded-xl p-8 max-w-md w-full">
-    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Convertisseur de Monnaie</h1>
-
-    <div class="mb-4">
-      <input type="number" id="amount" placeholder="Montant"
-             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+<body>
+    <div class="container">
+        <h1>Convertisseur Euro → Dollar</h1>
+        <p class="description">Convertissez rapidement des Euros en Dollars US avec notre outil simple et efficace.</p>
+        
+        <div class="input-group">
+            <label for="montant">Montant en Euros (€)</label>
+            <input type="number" id="montant" placeholder="Entrez le montant" min="0" step="0.01">
+        </div>
+        
+        <div class="input-group">
+            <label for="taux-change">Taux de change (1 € = ? $)</label>
+            <input type="number" id="taux-change" value="1.12" step="0.01" min="0.01">
+        </div>
+        
+        <div class="taux">
+            💱 Taux de change actuel: 1 Euro = <span id="taux-actuel">1.12</span> Dollars US
+        </div>
+        
+        <button class="btn-convertir" id="btn-convertir">Convertir</button>
+        
+        <div class="resultat" id="resultat">
+            <h3>Résultat de la conversion</h3>
+            <div class="montant-converti" id="montant-converti">0.00 $</div>
+            <p class="details" id="details-conversion"></p>
+        </div>
+        
+        <footer>
+            <p>Les taux de change sont actualisés manuellement. Dernière mise à jour: Aujourd'hui</p>
+        </footer>
     </div>
 
-    <div class="flex gap-4 mb-4">
-      <select id="fromCurrency"
-              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="EUR">EUR</option>
-        <option value="USD">USD</option>
-        <option value="XAF">XAF</option>
-        <option value="GBP">GBP</option>
-      </select>
-
-      <select id="toCurrency"
-              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="XAF">XAF</option>
-        <option value="GBP">GBP</option>
-      </select>
-    </div>
-
-    <button onclick="convert()"
-            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition">
-      Convertir
-    </button>
-
-    <p id="result" class="mt-6 text-center text-lg font-semibold text-gray-700"></p>
-  </div>
-
-  <script>
-    async function convert() {
-      const amount = document.getElementById("amount").value;
-      const from = document.getElementById("fromCurrency").value;
-      const to = document.getElementById("toCurrency").value;
-
-      if (!amount) {
-        alert("Veuillez entrer un montant !");
-        return;
-      }
-
-      try {
-        const res = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`);
-        const data = await res.json();
-
-        document.getElementById("result").innerText =
-          `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
-      } catch (err) {
-        document.getElementById("result").innerText = "Erreur lors de la conversion.";
-        console.error(err);
-      }
-    }
-  </script>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputMontant = document.getElementById('montant');
+            const inputTaux = document.getElementById('taux-change');
+            const spanTaux = document.getElementById('taux-actuel');
+            const btnConvertir = document.getElementById('btn-convertir');
+            const divResultat = document.getElementById('resultat');
+            const spanMontantConverti = document.getElementById('montant-converti');
+            const pDetails = document.getElementById('details-conversion');
+            
+            // Mettre à jour l'affichage du taux quand il change
+            inputTaux.addEventListener('input', function() {
+                spanTaux.textContent = parseFloat(this.value).toFixed(2);
+            });
+            
+            // Fonction de conversion
+            function convertir() {
+                const montant = parseFloat(inputMontant.value);
+                const taux = parseFloat(inputTaux.value);
+                
+                if (isNaN(montant) || montant <= 0) {
+                    alert('Veuillez entrer un montant valide supérieur à zéro.');
+                    return;
+                }
+                
+                if (isNaN(taux) || taux <= 0) {
+                    alert('Veuillez entrer un taux de change valide.');
+                    return;
+                }
+                
+                const resultat = montant * taux;
+                
+                // Afficher le résultat
+                spanMontantConverti.textContent = resultat.toFixed(2) + ' $';
+                pDetails.textContent = `${montant.toFixed(2)} € × ${taux.toFixed(2)} = ${resultat.toFixed(2)} $`;
+                
+                // Afficher la zone de résultat avec animation
+                divResultat.classList.add('visible');
+            }
+            
+            // Événement sur le bouton
+            btnConvertir.addEventListener('click', convertir);
+            
+            // Permettre aussi la conversion avec la touche Entrée
+            inputMontant.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    convertir();
+                }
+            });
+            
+            // Fonction pour obtenir un taux de change actualisé (simulation)
+            function actualiserTaux() {
+                // En situation réelle, on ferait une requête à une API
+                // Pour cet exemple, on simule un taux légèrement variable
+                const variation = (Math.random() * 0.1) - 0.05; // Variation entre -0.05 et +0.05
+                const nouveauTaux = (1.12 + variation).toFixed(2);
+                
+                inputTaux.value = nouveauTaux;
+                spanTaux.textContent = nouveauTaux;
+                
+                // Avertir que le taux a été actualisé
+                if (divResultat.classList.contains('visible')) {
+                    alert(`Taux de change actualisé: 1 € = ${nouveauTaux} $`);
+                }
+            }
+            
+            // Actualiser le taux toutes les 30 secondes (simulation)
+            setInterval(actualiserTaux, 30000);
+        });
+    </script>
 </body>
 </html>
