@@ -649,4 +649,102 @@
             <!-- Produit 5 -->
             <div class="product-card">
                 <div class="product-image">
-                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-
+                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Ordinateur portable">
+                </div>
+                <div class="product-details">
+                    <h3>Ordinateur Portable</h3>
+                    <p>Performant et léger</p>
+                    <div class="product-price">899,99 €</div>
+                    <button class="add-to-cart">Ajouter au panier</button>
+                </div>
+            </div>
+            
+            <!-- Produit 6 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Montre connectée">
+                </div>
+                <div class="product-details">
+                    <h3>Smartwatch Fitness</h3>
+                    <p>Suivi santé et notifications</p>
+                    <div class="product-price">149,99 €</div>
+                    <button class="add-to-cart">Ajouter au panier</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>SafinPay</h3>
+                <p>Votre plateforme e-commerce de confiance pour tous vos achats en ligne.</p>
+                <div class="social-icons">
+                    <a href="#"><span>FB</span></a>
+                    <a href="#"><span>IG</span></a>
+                    <a href="#"><span>TW</span></a>
+                    <a href="#"><span>YT</span></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="#">Accueil</a></li>
+                    <li><a href="#">Produits</a></li>
+                    <li><a href="#">Catégories</a></li>
+                    <li><a href="#">Vendre</a></li>
+                    <li><a href="#">À propos</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Centre d'aide</a></li>
+                    <li><a href="#">Contactez-nous</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Livraison</a></li>
+                    <li><a href="#">Retours</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Newsletter</h3>
+                <p>Inscrivez-vous pour recevoir nos offres exclusives</p>
+                <form>
+                    <input type="email" placeholder="Votre email" style="padding: 0.5rem; width: 100%; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid #444; background: transparent; color: white;">
+                    <button type="submit" style="background: var(--primary-green); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">S'abonner</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 SafinPay. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Script pour gérer l'ajout au panier
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const product = this.closest('.promo-card') || this.closest('.product-card');
+                const productName = product.querySelector('h3').textContent;
+                
+                // Animation d'ajout au panier
+                this.textContent = 'Ajouté !';
+                this.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    this.textContent = 'Ajouter au panier';
+                    this.style.background = '';
+                }, 2000);
+                
+                console.log(`Produit ajouté: ${productName}`);
+                // Ici, vous ajouteriez le code pour actualiser le panier
+            });
+        });
+    </script>
+</body>
+</html>
