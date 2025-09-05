@@ -2,25 +2,45 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Convertisseur de monnaie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convertisseur de Monnaie</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Convertisseur de monnaie</h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-  <input type="number" id="amount" placeholder="Montant">
-  <select id="fromCurrency">
-    <option value="EUR">EUR</option>
-    <option value="USD">USD</option>
-    <option value="XAF">XAF</option>
-  </select>
-  <select id="toCurrency">
-    <option value="USD">USD</option>
-    <option value="EUR">EUR</option>
-    <option value="XAF">XAF</option>
-  </select>
-  <button onclick="convert()">Convertir</button>
+  <div class="bg-white shadow-lg rounded-xl p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Convertisseur de Monnaie</h1>
 
-  <p id="result"></p>
+    <div class="mb-4">
+      <input type="number" id="amount" placeholder="Montant"
+             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <div class="flex gap-4 mb-4">
+      <select id="fromCurrency"
+              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="EUR">EUR</option>
+        <option value="USD">USD</option>
+        <option value="XAF">XAF</option>
+        <option value="GBP">GBP</option>
+      </select>
+
+      <select id="toCurrency"
+              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="XAF">XAF</option>
+        <option value="GBP">GBP</option>
+      </select>
+    </div>
+
+    <button onclick="convert()"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition">
+      Convertir
+    </button>
+
+    <p id="result" class="mt-6 text-center text-lg font-semibold text-gray-700"></p>
+  </div>
 
   <script>
     async function convert() {
@@ -28,12 +48,23 @@
       const from = document.getElementById("fromCurrency").value;
       const to = document.getElementById("toCurrency").value;
 
-      const res = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`);
-      const data = await res.json();
+      if (!amount) {
+        alert("Veuillez entrer un montant !");
+        return;
+      }
 
-      document.getElementById("result").innerText =
-        `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
+      try {
+        const res = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`);
+        const data = await res.json();
+
+        document.getElementById("result").innerText =
+          `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
+      } catch (err) {
+        document.getElementById("result").innerText = "Erreur lors de la conversion.";
+        console.error(err);
+      }
     }
   </script>
+
 </body>
 </html>
