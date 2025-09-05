@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertisseur Euro → Dollar</title>
+    <title>Convertisseur avec API de Change</title>
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -19,32 +31,40 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: var(--dark-color);
         }
         
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             padding: 30px;
             text-align: center;
         }
         
+        header {
+            margin-bottom: 25px;
+        }
+        
         h1 {
-            color: #333;
-            margin-bottom: 20px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
             font-size: 28px;
         }
         
         .description {
             color: #666;
-            margin-bottom: 30px;
             line-height: 1.5;
         }
         
+        .convertisseur {
+            margin: 25px 0;
+        }
+        
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: left;
         }
         
@@ -57,38 +77,70 @@
         
         input, select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 2px solid #ddd;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: var(--transition);
         }
         
         input:focus, select:focus {
-            border-color: #667eea;
+            border-color: var(--primary-color);
             outline: none;
         }
         
-        .taux {
-            background-color: #f8f9fa;
+        .devises {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .devise-input {
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .switch-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .switch-btn:hover {
+            background-color: var(--secondary-color);
+            transform: rotate(180deg);
+        }
+        
+        .taux-actuel {
+            background-color: #f0f7ff;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             margin: 20px 0;
             font-size: 14px;
             color: #555;
         }
         
         .btn-convertir {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: var(--border-radius);
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: var(--transition);
+            margin-top: 10px;
         }
         
         .btn-convertir:hover {
@@ -96,16 +148,19 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .btn-convertir:active {
-            transform: translateY(0);
+        .btn-convertir:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .resultat {
             margin-top: 25px;
             padding: 20px;
             background-color: #f0f9ff;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
             text-align: center;
             display: none;
         }
@@ -118,18 +173,76 @@
         .montant-converti {
             font-size: 32px;
             font-weight: bold;
-            color: #333;
+            color: var(--primary-color);
             margin: 10px 0;
         }
         
         .details {
             color: #666;
             font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .chargement {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .chargement.visible {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        .erreur {
+            background-color: #ffe6e6;
+            color: #d32f2f;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .erreur.visible {
+            display: block;
+        }
+        
+        .historique {
+            margin-top: 25px;
+            text-align: left;
+        }
+        
+        .historique h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        #liste-historique {
+            list-style-type: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        #liste-historique li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
         
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         footer {
@@ -146,109 +259,255 @@
             h1 {
                 font-size: 24px;
             }
+            
+            .devises {
+                flex-direction: column;
+            }
+            
+            .devise-input {
+                margin: 10px 0;
+                width: 100%;
+            }
+            
+            .switch-btn {
+                margin: 10px 0;
+                transform: rotate(90deg);
+            }
+            
+            .switch-btn:hover {
+                transform: rotate(270deg);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Convertisseur Euro → Dollar</h1>
-        <p class="description">Convertissez rapidement des Euros en Dollars US avec notre outil simple et efficace.</p>
+        <header>
+            <h1>Convertisseur de Devises</h1>
+            <p class="description">Utilisez les taux de change en temps réel grâce à notre API</p>
+        </header>
         
-        <div class="input-group">
-            <label for="montant">Montant en Euros (€)</label>
-            <input type="number" id="montant" placeholder="Entrez le montant" min="0" step="0.01">
+        <div class="convertisseur">
+            <div class="input-group">
+                <label for="montant">Montant</label>
+                <input type="number" id="montant" placeholder="Entrez le montant" min="0" step="0.01">
+            </div>
+            
+            <div class="devises">
+                <div class="devise-input">
+                    <label for="devise-source">De</label>
+                    <select id="devise-source">
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="USD">Dollar US (USD)</option>
+                        <option value="GBP">Livre Sterling (GBP)</option>
+                        <option value="JPY">Yen Japonais (JPY)</option>
+                        <option value="CAD">Dollar Canadien (CAD)</option>
+                        <option value="CHF">Franc Suisse (CHF)</option>
+                    </select>
+                </div>
+                
+                <button class="switch-btn" id="switch-devises">⇄</button>
+                
+                <div class="devise-input">
+                    <label for="devise-cible">Vers</label>
+                    <select id="devise-cible">
+                        <option value="USD">Dollar US (USD)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="GBP">Livre Sterling (GBP)</option>
+                        <option value="JPY">Yen Japonais (JPY)</option>
+                        <option value="CAD">Dollar Canadien (CAD)</option>
+                        <option value="CHF">Franc Suisse (CHF)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="taux-actuel">
+                💱 Taux de change actuel: <span id="taux-actuel">Chargement...</span>
+            </div>
+            
+            <div class="chargement" id="chargement">
+                <div class="spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+            
+            <div class="erreur" id="erreur"></div>
+            
+            <button class="btn-convertir" id="btn-convertir" disabled>Convertir</button>
+            
+            <div class="resultat" id="resultat">
+                <h3>Résultat de la conversion</h3>
+                <div class="montant-converti" id="montant-converti">0.00</div>
+                <p class="details" id="details-conversion"></p>
+            </div>
         </div>
         
-        <div class="input-group">
-            <label for="taux-change">Taux de change (1 € = ? $)</label>
-            <input type="number" id="taux-change" value="1.12" step="0.01" min="0.01">
-        </div>
-        
-        <div class="taux">
-            💱 Taux de change actuel: 1 Euro = <span id="taux-actuel">1.12</span> Dollars US
-        </div>
-        
-        <button class="btn-convertir" id="btn-convertir">Convertir</button>
-        
-        <div class="resultat" id="resultat">
-            <h3>Résultat de la conversion</h3>
-            <div class="montant-converti" id="montant-converti">0.00 $</div>
-            <p class="details" id="details-conversion"></p>
+        <div class="historique">
+            <h3>Historique des conversions</h3>
+            <ul id="liste-historique"></ul>
         </div>
         
         <footer>
-            <p>Les taux de change sont actualisés manuellement. Dernière mise à jour: Aujourd'hui</p>
+            <p>Taux de change fournis par <a href="https://www.frankfurter.app/" target="_blank">Frankfurter API</a></p>
+            <p>Dernière actualisation: <span id="derniere-maj">-</span></p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Éléments DOM
             const inputMontant = document.getElementById('montant');
-            const inputTaux = document.getElementById('taux-change');
+            const selectSource = document.getElementById('devise-source');
+            const selectCible = document.getElementById('devise-cible');
             const spanTaux = document.getElementById('taux-actuel');
             const btnConvertir = document.getElementById('btn-convertir');
+            const btnSwitch = document.getElementById('switch-devises');
             const divResultat = document.getElementById('resultat');
             const spanMontantConverti = document.getElementById('montant-converti');
             const pDetails = document.getElementById('details-conversion');
+            const divChargement = document.getElementById('chargement');
+            const divErreur = document.getElementById('erreur');
+            const spanDerniereMaj = document.getElementById('derniere-maj');
+            const listeHistorique = document.getElementById('liste-historique');
             
-            // Mettre à jour l'affichage du taux quand il change
-            inputTaux.addEventListener('input', function() {
-                spanTaux.textContent = parseFloat(this.value).toFixed(2);
-            });
+            // Variables globales
+            let tauxActuel = 0;
+            let historique = JSON.parse(localStorage.getItem('historiqueConvertisseur')) || [];
             
-            // Fonction de conversion
+            // Initialisation
+            afficherHistorique();
+            obtenirTauxDeChange();
+            
+            // Événements
+            inputMontant.addEventListener('input', verifierFormulaire);
+            selectSource.addEventListener('change', obtenirTauxDeChange);
+            selectCible.addEventListener('change', obtenirTauxDeChange);
+            btnConvertir.addEventListener('click', convertir);
+            btnSwitch.addEventListener('click', inverserDevises);
+            
+            // Vérifier si le formulaire est valide
+            function verifierFormulaire() {
+                const montant = parseFloat(inputMontant.value);
+                btnConvertir.disabled = isNaN(montant) || montant <= 0;
+            }
+            
+            // Inverser les devises
+            function inverserDevises() {
+                const temp = selectSource.value;
+                selectSource.value = selectCible.value;
+                selectCible.value = temp;
+                obtenirTauxDeChange();
+            }
+            
+            // Obtenir le taux de change via API
+            async function obtenirTauxDeChange() {
+                const deviseSource = selectSource.value;
+                const deviseCible = selectCible.value;
+                
+                // Réinitialiser les messages
+                divErreur.classList.remove('visible');
+                divChargement.classList.add('visible');
+                spanTaux.textContent = 'Chargement...';
+                
+                try {
+                    // Appel à l'API Frankfurter
+                    const response = await fetch(`https://api.frankfurter.app/latest?from=${deviseSource}&to=${deviseCible}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erreur API: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Mettre à jour l'interface
+                    tauxActuel = data.rates[deviseCible];
+                    spanTaux.textContent = `1 ${deviseSource} = ${tauxActuel.toFixed(4)} ${deviseCible}`;
+                    
+                    // Mettre à jour la date de dernière actualisation
+                    const dateMaj = new Date(data.date);
+                    spanDerniereMaj.textContent = dateMaj.toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    divErreur.textContent = `Impossible de récupérer les taux de change: ${error.message}`;
+                    divErreur.classList.add('visible');
+                    spanTaux.textContent = 'Erreur de chargement';
+                } finally {
+                    divChargement.classList.remove('visible');
+                    verifierFormulaire();
+                }
+            }
+            
+            // Effectuer la conversion
             function convertir() {
                 const montant = parseFloat(inputMontant.value);
-                const taux = parseFloat(inputTaux.value);
+                const deviseSource = selectSource.value;
+                const deviseCible = selectCible.value;
                 
                 if (isNaN(montant) || montant <= 0) {
-                    alert('Veuillez entrer un montant valide supérieur à zéro.');
+                    divErreur.textContent = 'Veuillez entrer un montant valide.';
+                    divErreur.classList.add('visible');
                     return;
                 }
                 
-                if (isNaN(taux) || taux <= 0) {
-                    alert('Veuillez entrer un taux de change valide.');
-                    return;
-                }
-                
-                const resultat = montant * taux;
+                const resultat = montant * tauxActuel;
                 
                 // Afficher le résultat
-                spanMontantConverti.textContent = resultat.toFixed(2) + ' $';
-                pDetails.textContent = `${montant.toFixed(2)} € × ${taux.toFixed(2)} = ${resultat.toFixed(2)} $`;
-                
-                // Afficher la zone de résultat avec animation
+                spanMontantConverti.textContent = `${resultat.toFixed(2)} ${deviseCible}`;
+                pDetails.textContent = `${montant.toFixed(2)} ${deviseSource} = ${resultat.toFixed(2)} ${deviseCible} (Taux: ${tauxActuel.toFixed(4)})`;
                 divResultat.classList.add('visible');
+                
+                // Ajouter à l'historique
+                ajouterHistorique({
+                    date: new Date(),
+                    montant: montant,
+                    source: deviseSource,
+                    cible: deviseCible,
+                    resultat: resultat,
+                    taux: tauxActuel
+                });
             }
             
-            // Événement sur le bouton
-            btnConvertir.addEventListener('click', convertir);
-            
-            // Permettre aussi la conversion avec la touche Entrée
-            inputMontant.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    convertir();
-                }
-            });
-            
-            // Fonction pour obtenir un taux de change actualisé (simulation)
-            function actualiserTaux() {
-                // En situation réelle, on ferait une requête à une API
-                // Pour cet exemple, on simule un taux légèrement variable
-                const variation = (Math.random() * 0.1) - 0.05; // Variation entre -0.05 et +0.05
-                const nouveauTaux = (1.12 + variation).toFixed(2);
+            // Gérer l'historique
+            function ajouterHistorique(conversion) {
+                historique.unshift(conversion);
                 
-                inputTaux.value = nouveauTaux;
-                spanTaux.textContent = nouveauTaux;
-                
-                // Avertir que le taux a été actualisé
-                if (divResultat.classList.contains('visible')) {
-                    alert(`Taux de change actualisé: 1 € = ${nouveauTaux} $`);
+                // Garder seulement les 5 dernières conversions
+                if (historique.length > 5) {
+                    historique.pop();
                 }
+                
+                // Sauvegarder dans le localStorage
+                localStorage.setItem('historiqueConvertisseur', JSON.stringify(historique));
+                
+                // Mettre à jour l'affichage
+                afficherHistorique();
             }
             
-            // Actualiser le taux toutes les 30 secondes (simulation)
-            setInterval(actualiserTaux, 30000);
+            function afficherHistorique() {
+                listeHistorique.innerHTML = '';
+                
+                if (historique.length === 0) {
+                    listeHistorique.innerHTML = '<li>Aucune conversion récente</li>';
+                    return;
+                }
+                
+                historique.forEach(item => {
+                    const li = document.createElement('li');
+                    const date = new Date(item.date).toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    li.textContent = `${date}: ${item.montant.toFixed(2)} ${item.source} → ${item.resultat.toFixed(2)} ${item.cible}`;
+                    listeHistorique.appendChild(li);
+                });
+            }
         });
     </script>
 </body>
