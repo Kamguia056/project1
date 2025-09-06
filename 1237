@@ -1,153 +1,197 @@
-.categories-sidebar {
-    width: 250px;
-    background: var(--white);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: 400px; /* Hauteur fixe */
+<!-- Navigation Menu -->
+<nav class="nav-menu">
+    <div class="nav-container">
+        <ul>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <i class="fas fa-bars"></i> Catégories
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <div class="categories-grid">
+                        <div class="category-column">
+                            <h4>Électronique</h4>
+                            <ul>
+                                <li><a href="#">Smartphones & Téléphones</a></li>
+                                <li><a href="#">Ordinateurs & Tablettes</a></li>
+                                <li><a href="#">TV & Audio</a></li>
+                                <li><a href="#">Accessoires</a></li>
+                            </ul>
+                        </div>
+                        <div class="category-column">
+                            <h4>Mode</h4>
+                            <ul>
+                                <li><a href="#">Vêtements Hommes</a></li>
+                                <li><a href="#">Vêtements Femmes</a></li>
+                                <li><a href="#">Chaussures</a></li>
+                                <li><a href="#">Accessoires</a></li>
+                            </ul>
+                        </div>
+                        <div class="category-column">
+                            <h4>Maison</h4>
+                            <ul>
+                                <li><a href="#">Meubles</a></li>
+                                <li><a href="#">Décoration</a></li>
+                                <li><a href="#">Cuisine</a></li>
+                                <li><a href="#">Jardin</a></li>
+                            </ul>
+                        </div>
+                        <div class="category-column">
+                            <h4>Autres</h4>
+                            <ul>
+                                <li><a href="#">Beauté & Santé</a></li>
+                                <li><a href="#">Sports & Loisirs</a></li>
+                                <li><a href="#">Automobile</a></li>
+                                <li><a href="#">Jouets</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Nouveautés</a></li>
+            <li><a href="#">Promotions</a></li>
+            <li><a href="#">Vendre</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+
+/* Styles pour le menu déroulant des catégories */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary-green);
+    color: white !important;
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 4px;
+    font-weight: 600;
 }
 
-.categories-scroll {
-    overflow-y: auto;
-    flex: 1;
+.dropdown-toggle i.fa-chevron-down {
+    font-size: 0.8rem;
+    margin-left: 0.3rem;
 }
 
-.categories-list {
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 800px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    padding: 1.5rem;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.category-column h4 {
+    margin-bottom: 1rem;
+    color: var(--dark-gray);
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-green);
+}
+
+.category-column ul {
     list-style: none;
 }
 
-.categories-list li {
-    border-bottom: 1px solid var(--border-color);
+.category-column li {
+    margin-bottom: 0.7rem;
 }
 
-.categories-list a {
-    display: flex;
-    align-items: center;
-    padding: 0.8rem 1rem;
+.category-column a {
     color: #555;
     text-decoration: none;
-    transition: all 0.3s;
-}
-
-.categories-list a i {
-    margin-right: 0.8rem;
-    color: var(--primary-green);
-    width: 20px;
-    text-align: center;
-}
-
-.categories-list a:hover {
-    background-color: #f0f8f1;
-    color: var(--primary-green);
-}
-
-.banner-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.banner-slider {
-    flex: 2;
-    background: #ddd;
-    border-radius: 4px;
-    height: 250px;
-    position: relative;
-    overflow: hidden;
-}
-
-.banner-slider img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.featured-products-side {
-    flex: 1;
-    background: var(--white);
-    border-radius: 4px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.featured-products-side h4 {
-    margin-bottom: 1rem;
-    color: var(--dark-gray);
-    font-size: 1.1rem;
-}
-
-.side-products {
-    display: flex;
-    gap: 1rem;
-}
-
-.side-product {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    flex: 1;
-}
-
-.side-product-image {
-    width: 60px;
-    height: 60px;
-    background: #fafafa;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.side-product-image img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.side-product-info {
-    flex: 1;
-}
-
-.side-product-title {
-    font-size: 0.85rem;
-    margin-bottom: 0.3rem;
-    color: #333;
-}
-
-.side-product-price {
-    font-weight: 600;
-    color: var(--primary-green);
     font-size: 0.9rem;
+    transition: color 0.3s;
 }
 
-/* Media Query pour responsive */
+.category-column a:hover {
+    color: var(--primary-green);
+}
+
+/* Ajustement pour l'alignement du menu */
+.nav-menu ul {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.nav-menu a {
+    display: block;
+    padding: 1rem 1.2rem;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    white-space: nowrap;
+}
+
+.nav-menu a:hover {
+    color: var(--primary-green);
+}
+
+/* Responsive */
 @media (max-width: 968px) {
-    .banner-container {
-        flex-direction: column;
+    .dropdown-menu {
+        width: 600px;
+        left: -100px;
     }
     
-    .categories-sidebar {
-        width: 100%;
-        height: auto;
-        margin-bottom: 1rem;
-    }
-    
-    .categories-scroll {
-        max-height: 200px;
-    }
-    
-    .side-products {
-        flex-direction: column;
-    }
-    
-    .side-product {
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .side-product:last-child {
-        border-bottom: none;
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
+
+@media (max-width: 768px) {
+    .nav-menu ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .dropdown-menu {
+        position: fixed;
+        width: 90%;
+        left: 5%;
+        top: 150px;
+    }
+}
+
+
+<script>
+    // Pour le menu déroulant sur mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        
+        if (window.innerWidth < 768) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            });
+        }
+    });
+</script>
